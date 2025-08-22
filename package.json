@@ -18,7 +18,9 @@
     "react-router-dom": "^6.16.0",
     "echarts": "^5.4.3",
     "echarts-for-react": "^3.0.2",
-    "date-fns": "^2.30.0"
+    "date-fns": "^2.30.0",
+    "uuid": "^9.0.1",
+    "recharts": "^2.8.0"
   },
   "devDependencies": {
     "@types/react": "^18.2.15",

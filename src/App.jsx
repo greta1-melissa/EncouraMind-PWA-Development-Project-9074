@@ -14,9 +14,15 @@ import InstallPrompt from './components/InstallPrompt';
 import NotificationManager from './components/NotificationManager';
 import Logo from './components/Logo';
 
-// Pages
+// Auth Pages
+import Login from './pages/Login';
+import Signup from './pages/Signup';
+import ForgotPassword from './pages/ForgotPassword';
+
+// Main Pages
 import Dashboard from './pages/Dashboard';
 import DailyEncouragement from './pages/DailyEncouragement';
+import WellnessAssessmentPage from './pages/WellnessAssessmentPage';
 import Progress from './pages/Progress';
 import Goals from './pages/Goals';
 import Stories from './pages/Stories';
@@ -34,29 +40,63 @@ import AdminSettings from './pages/admin/AdminSettings';
 // Styles
 import './App.css';
 
-// Protected Route Component 
+// Auth Hook
+import { useAuth } from './contexts/AuthContext';
+
+// Protected Route Component
 const ProtectedRoute = ({ children }) => {
-  const isAuthenticated = true; // For demo, assume always authenticated
-  return isAuthenticated ? children : <Navigate to="/login" />;
+  const { user, isLoading } = useAuth();
+  
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <motion.div
+          animate={{ rotate: 360 }}
+          transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+          className="w-8 h-8 border-4 border-indigo-500 border-t-transparent rounded-full"
+        />
+      </div>
+    );
+  }
+  
+  return user ? children : <Navigate to="/login" />;
 };
 
 // Admin Protected Route
 const AdminRoute = ({ children }) => {
-  // For demo, check localStorage
   const isAdminAuthenticated = localStorage.getItem('adminToken') !== null;
   return isAdminAuthenticated ? children : <Navigate to="/admin/login" />;
+};
+
+// Auth Route (redirect if already logged in)
+const AuthRoute = ({ children }) => {
+  const { user, isLoading } = useAuth();
+  
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <motion.div
+          animate={{ rotate: 360 }}
+          transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+          className="w-8 h-8 border-4 border-indigo-500 border-t-transparent rounded-full"
+        />
+      </div>
+    );
+  }
+  
+  return user ? <Navigate to="/" /> : children;
 };
 
 // Loading Screen Component
 const LoadingScreen = () => (
   <div className="fixed inset-0 bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500 flex items-center justify-center">
-    <motion.div 
+    <motion.div
       className="text-center"
       initial={{ opacity: 0, scale: 0.8 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.6 }}
     >
-      <motion.div 
+      <motion.div
         className="mx-auto mb-6"
         initial={{ rotate: 0 }}
         animate={{ rotate: 360 }}
@@ -67,7 +107,7 @@ const LoadingScreen = () => (
       <h1 className="text-4xl font-bold text-white mb-2">EncouraMind</h1>
       <p className="text-xl text-blue-100">Encouraging Minds, Enriching Lives</p>
       <div className="mt-8">
-        <motion.div 
+        <motion.div
           className="w-12 h-1 bg-blue-300 mx-auto rounded-full"
           initial={{ width: 0 }}
           animate={{ width: 48 }}
@@ -116,94 +156,166 @@ function App() {
               <InstallPrompt />
               <NotificationManager />
               <Routes>
+                {/* Auth Routes */}
+                <Route 
+                  path="/login" 
+                  element={
+                    <AuthRoute>
+                      <Login />
+                    </AuthRoute>
+                  } 
+                />
+                <Route 
+                  path="/signup" 
+                  element={
+                    <AuthRoute>
+                      <Signup />
+                    </AuthRoute>
+                  } 
+                />
+                <Route 
+                  path="/forgot-password" 
+                  element={
+                    <AuthRoute>
+                      <ForgotPassword />
+                    </AuthRoute>
+                  } 
+                />
+
                 {/* Main App Routes */}
-                <Route path="/" element={
-                  <ProtectedRoute>
-                    <Layout>
-                      <Dashboard />
-                    </Layout>
-                  </ProtectedRoute>
-                } />
-                <Route path="/daily" element={
-                  <ProtectedRoute>
-                    <Layout>
-                      <DailyEncouragement />
-                    </Layout>
-                  </ProtectedRoute>
-                } />
-                <Route path="/progress" element={
-                  <ProtectedRoute>
-                    <Layout>
-                      <Progress />
-                    </Layout>
-                  </ProtectedRoute>
-                } />
-                <Route path="/goals" element={
-                  <ProtectedRoute>
-                    <Layout>
-                      <Goals />
-                    </Layout>
-                  </ProtectedRoute>
-                } />
-                <Route path="/stories" element={
-                  <ProtectedRoute>
-                    <Layout>
-                      <Stories />
-                    </Layout>
-                  </ProtectedRoute>
-                } />
-                <Route path="/quiz" element={
-                  <ProtectedRoute>
-                    <Layout>
-                      <Quiz />
-                    </Layout>
-                  </ProtectedRoute>
-                } />
-                <Route path="/profile" element={
-                  <ProtectedRoute>
-                    <Layout>
-                      <Profile />
-                    </Layout>
-                  </ProtectedRoute>
-                } />
+                <Route
+                  path="/"
+                  element={
+                    <ProtectedRoute>
+                      <Layout>
+                        <Dashboard />
+                      </Layout>
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/daily"
+                  element={
+                    <ProtectedRoute>
+                      <Layout>
+                        <DailyEncouragement />
+                      </Layout>
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/wellness-assessment"
+                  element={
+                    <ProtectedRoute>
+                      <Layout>
+                        <WellnessAssessmentPage />
+                      </Layout>
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/progress"
+                  element={
+                    <ProtectedRoute>
+                      <Layout>
+                        <Progress />
+                      </Layout>
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/goals"
+                  element={
+                    <ProtectedRoute>
+                      <Layout>
+                        <Goals />
+                      </Layout>
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/stories"
+                  element={
+                    <ProtectedRoute>
+                      <Layout>
+                        <Stories />
+                      </Layout>
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/quiz"
+                  element={
+                    <ProtectedRoute>
+                      <Layout>
+                        <Quiz />
+                      </Layout>
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/profile"
+                  element={
+                    <ProtectedRoute>
+                      <Layout>
+                        <Profile />
+                      </Layout>
+                    </ProtectedRoute>
+                  }
+                />
 
                 {/* Admin Routes */}
                 <Route path="/admin/login" element={<AdminLogin />} />
-                <Route path="/admin" element={
-                  <AdminRoute>
-                    <AdminLayout>
-                      <AdminDashboard />
-                    </AdminLayout>
-                  </AdminRoute>
-                } />
-                <Route path="/admin/users" element={
-                  <AdminRoute>
-                    <AdminLayout>
-                      <AdminUsers />
-                    </AdminLayout>
-                  </AdminRoute>
-                } />
-                <Route path="/admin/content" element={
-                  <AdminRoute>
-                    <AdminLayout>
-                      <AdminContent />
-                    </AdminLayout>
-                  </AdminRoute>
-                } />
-                <Route path="/admin/analytics" element={
-                  <AdminRoute>
-                    <AdminLayout>
-                      <AdminAnalytics />
-                    </AdminLayout>
-                  </AdminRoute>
-                } />
-                <Route path="/admin/settings" element={
-                  <AdminRoute>
-                    <AdminLayout>
-                      <AdminSettings />
-                    </AdminLayout>
-                  </AdminRoute>
-                } />
+                <Route
+                  path="/admin"
+                  element={
+                    <AdminRoute>
+                      <AdminLayout>
+                        <AdminDashboard />
+                      </AdminLayout>
+                    </AdminRoute>
+                  }
+                />
+                <Route
+                  path="/admin/users"
+                  element={
+                    <AdminRoute>
+                      <AdminLayout>
+                        <AdminUsers />
+                      </AdminLayout>
+                    </AdminRoute>
+                  }
+                />
+                <Route
+                  path="/admin/content"
+                  element={
+                    <AdminRoute>
+                      <AdminLayout>
+                        <AdminContent />
+                      </AdminLayout>
+                    </AdminRoute>
+                  }
+                />
+                <Route
+                  path="/admin/analytics"
+                  element={
+                    <AdminRoute>
+                      <AdminLayout>
+                        <AdminAnalytics />
+                      </AdminLayout>
+                    </AdminRoute>
+                  }
+                />
+                <Route
+                  path="/admin/settings"
+                  element={
+                    <AdminRoute>
+                      <AdminLayout>
+                        <AdminSettings />
+                      </AdminLayout>
+                    </AdminRoute>
+                  }
+                />
 
                 {/* Fallback route */}
                 <Route path="*" element={<Navigate to="/" />} />
