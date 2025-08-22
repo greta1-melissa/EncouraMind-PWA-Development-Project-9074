@@ -19,7 +19,6 @@ export const DataProvider = ({ children }) => {
     dailyStreak: 0,
     totalPoints: 0
   });
-
   const [dailyEncouragement, setDailyEncouragement] = useState('');
   const [stories, setStories] = useState([]);
   const [quizzes, setQuizzes] = useState([]);
@@ -30,7 +29,6 @@ export const DataProvider = ({ children }) => {
     if (saved) {
       setUserData(JSON.parse(saved));
     }
-    
     initializeContent();
   }, []);
 
@@ -46,10 +44,10 @@ export const DataProvider = ({ children }) => {
       "Progress isn't always linear, and that's perfectly okay.",
       "You are worthy of love, happiness, and inner peace."
     ];
-    
+
     const today = new Date().toDateString();
     const savedDay = localStorage.getItem('dailyEncouragementDate');
-    
+
     if (savedDay !== today) {
       const randomEncouragement = encouragements[Math.floor(Math.random() * encouragements.length)];
       setDailyEncouragement(randomEncouragement);
@@ -158,23 +156,44 @@ export const DataProvider = ({ children }) => {
       progress: 0,
       completed: false
     };
-    saveUserData({ goals: [...userData.goals, newGoal] });
+    saveUserData({
+      goals: [...userData.goals, newGoal]
+    });
   };
 
   const updateGoal = (goalId, updates) => {
     const updatedGoals = userData.goals.map(goal =>
       goal.id === goalId ? { ...goal, ...updates } : goal
     );
-    saveUserData({ goals: updatedGoals });
+    saveUserData({
+      goals: updatedGoals
+    });
   };
 
   const addProgress = (entry) => {
     const newEntry = {
-      id: Date.now(),
+      id: Date.now() + Math.random(), // Ensure unique ID
       ...entry,
-      date: new Date().toISOString()
+      date: entry.date || new Date().toISOString()
     };
-    saveUserData({ progress: [...userData.progress, newEntry] });
+    
+    // Add to progress array
+    const updatedProgress = [...(userData.progress || []), newEntry];
+    
+    // Update daily streak if it's a new day
+    const today = new Date().toDateString();
+    const lastEntryDate = userData.progress?.length > 0 
+      ? new Date(userData.progress[userData.progress.length - 1].date).toDateString()
+      : null;
+    
+    const newStreak = lastEntryDate !== today 
+      ? (userData.dailyStreak || 0) + 1 
+      : userData.dailyStreak || 0;
+
+    saveUserData({
+      progress: updatedProgress,
+      dailyStreak: newStreak
+    });
   };
 
   const completeQuiz = (quizId, answers, score) => {
@@ -185,10 +204,58 @@ export const DataProvider = ({ children }) => {
       score,
       completedAt: new Date().toISOString()
     };
-    saveUserData({ 
+    saveUserData({
       quizResults: [...userData.quizResults, result],
       totalPoints: userData.totalPoints + score
     });
+  };
+
+  // New function to sync assessment data with progress
+  const syncAssessmentToProgress = (assessmentData) => {
+    if (!assessmentData || !assessmentData.scores) return;
+
+    const assessmentDate = assessmentData.completedAt;
+    const existingProgress = userData.progress || [];
+    
+    // Check if this assessment is already synced
+    const alreadySynced = existingProgress.some(entry => 
+      entry.source === 'assessment' && 
+      entry.assessmentId === assessmentData.id
+    );
+
+    if (!alreadySynced) {
+      // Add progress entries for each assessment section
+      Object.entries(assessmentData.scores).forEach(([sectionId, scoreData]) => {
+        const progressEntry = {
+          type: mapAssessmentToProgressType(sectionId),
+          value: Math.round(scoreData.percentage / 20), // Convert 0-100 to 1-5 scale
+          date: assessmentDate,
+          notes: `Auto-synced from wellness assessment - ${getScoreInterpretation(scoreData.percentage)}`,
+          source: 'assessment',
+          assessmentId: assessmentData.id,
+          rawScore: scoreData.percentage
+        };
+        addProgress(progressEntry);
+      });
+    }
+  };
+
+  const mapAssessmentToProgressType = (sectionId) => {
+    const mapping = {
+      'mental_health': 'mood',
+      'physical_health': 'exercise',
+      'social_wellbeing': 'social',
+      'stress_management': 'stress',
+      'lifestyle_habits': 'habits'
+    };
+    return mapping[sectionId] || 'mood';
+  };
+
+  const getScoreInterpretation = (percentage) => {
+    if (percentage >= 80) return 'Excellent wellness level';
+    if (percentage >= 60) return 'Good wellness level';
+    if (percentage >= 40) return 'Fair wellness level';
+    return 'Needs attention';
   };
 
   const value = {
@@ -200,7 +267,8 @@ export const DataProvider = ({ children }) => {
     addGoal,
     updateGoal,
     addProgress,
-    completeQuiz
+    completeQuiz,
+    syncAssessmentToProgress
   };
 
   return (
