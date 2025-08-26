@@ -1,5 +1,5 @@
-import React,{useState,useEffect} from 'react';
-import {HashRouter as Router,Routes,Route,Navigate} from 'react-router-dom';
+import React, {useState, useEffect} from 'react';
+import {HashRouter as Router, Routes, Route, Navigate} from 'react-router-dom';
 import {motion} from 'framer-motion';
 
 // Contexts
@@ -45,19 +45,19 @@ import './App.css';
 // Auth Hook
 import {useAuth} from './contexts/AuthContext';
 
-// Protected Route Component 
-const ProtectedRoute=({children})=> {
-  const {user,isLoading}=useAuth();
-
+// Protected Route Component
+const ProtectedRoute = ({children}) => {
+  const {user, isLoading} = useAuth();
+  
   if (isLoading) {
-    return ( 
+    return (
       <div className="min-h-screen flex items-center justify-center">
-        <motion.div 
-          animate={{rotate: 360}} 
-          transition={{duration: 1,repeat: Infinity,ease: "linear"}} 
-          className="w-8 h-8 border-4 border-indigo-500 border-t-transparent rounded-full" 
+        <motion.div
+          animate={{rotate: 360}}
+          transition={{duration: 1, repeat: Infinity, ease: "linear"}}
+          className="w-8 h-8 border-4 border-indigo-500 border-t-transparent rounded-full"
         />
-      </div> 
+      </div>
     );
   }
 
@@ -65,24 +65,24 @@ const ProtectedRoute=({children})=> {
 };
 
 // Admin Protected Route
-const AdminRoute=({children})=> {
-  const isAdminAuthenticated=localStorage.getItem('adminToken') !==null;
+const AdminRoute = ({children}) => {
+  const isAdminAuthenticated = localStorage.getItem('adminToken') !== null;
   return isAdminAuthenticated ? children : <Navigate to="/admin/login" />;
 };
 
-// Auth Route (redirect if already logged in) 
-const AuthRoute=({children})=> {
-  const {user,isLoading}=useAuth();
-
+// Auth Route (redirect if already logged in)
+const AuthRoute = ({children}) => {
+  const {user, isLoading} = useAuth();
+  
   if (isLoading) {
-    return ( 
+    return (
       <div className="min-h-screen flex items-center justify-center">
-        <motion.div 
-          animate={{rotate: 360}} 
-          transition={{duration: 1,repeat: Infinity,ease: "linear"}} 
-          className="w-8 h-8 border-4 border-indigo-500 border-t-transparent rounded-full" 
+        <motion.div
+          animate={{rotate: 360}}
+          transition={{duration: 1, repeat: Infinity, ease: "linear"}}
+          className="w-8 h-8 border-4 border-indigo-500 border-t-transparent rounded-full"
         />
-      </div> 
+      </div>
     );
   }
 
@@ -90,66 +90,65 @@ const AuthRoute=({children})=> {
 };
 
 // Loading Screen Component
-const LoadingScreen=()=> ( 
+const LoadingScreen = () => (
   <div className="fixed inset-0 bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500 flex items-center justify-center">
-    <motion.div 
-      className="text-center" 
-      initial={{opacity: 0,scale: 0.8}} 
-      animate={{opacity: 1,scale: 1}} 
-      transition={{duration: 0.6}} 
+    <motion.div
+      className="text-center"
+      initial={{opacity: 0, scale: 0.8}}
+      animate={{opacity: 1, scale: 1}}
+      transition={{duration: 0.6}}
     >
-      <motion.div 
-        className="mx-auto mb-6" 
-        initial={{rotate: 0}} 
-        animate={{rotate: 360}} 
-        transition={{duration: 2,repeat: Infinity,ease: "linear"}} 
-      >
-        <Logo size="xl" className="shadow-2xl" />
-      </motion.div>
+      {/* Updated to use spinning prop and remove extra motion wrapper */}
+      <div className="mx-auto mb-6">
+        <Logo size="xl" className="shadow-2xl" spinning={true} />
+      </div>
+      
       <h1 className="text-4xl font-bold text-white mb-2">EncouraMind</h1>
-      <p className="text-xl text-blue-100">Encouraging Minds,Enriching Lives</p>
+      <p className="text-xl text-blue-100">Encouraging Minds, Enriching Lives</p>
+      
       <div className="mt-8">
-        <motion.div 
-          className="w-12 h-1 bg-blue-300 mx-auto rounded-full" 
-          initial={{width: 0}} 
-          animate={{width: 48}} 
-          transition={{repeat: Infinity,duration: 1.5,ease: "easeInOut"}} 
+        <motion.div
+          className="w-12 h-1 bg-blue-300 mx-auto rounded-full"
+          initial={{width: 0}}
+          animate={{width: 48}}
+          transition={{repeat: Infinity, duration: 1.5, ease: "easeInOut"}}
         />
       </div>
     </motion.div>
-  </div> 
+  </div>
 );
 
 function App() {
-  const [loading,setLoading]=useState(true);
+  const [loading, setLoading] = useState(true);
 
-  // Simulate loading 
-  useEffect(()=> {
-    const timer=setTimeout(()=> {
+  // Simulate loading
+  useEffect(() => {
+    const timer = setTimeout(() => {
       setLoading(false);
-    },2000);
-    return ()=> clearTimeout(timer);
-  },[]);
+    }, 2000);
 
-  // Register service worker for PWA 
-  useEffect(()=> {
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Register service worker for PWA
+  useEffect(() => {
     if ('serviceWorker' in navigator) {
-      window.addEventListener('load',()=> {
-        navigator.serviceWorker.register('/sw.js') 
-          .then((registration)=> {
-            console.log('ServiceWorker registration successful with scope: ',registration.scope);
-          },(err)=> {
-            console.log('ServiceWorker registration failed: ',err);
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js')
+          .then((registration) => {
+            console.log('ServiceWorker registration successful with scope: ', registration.scope);
+          }, (err) => {
+            console.log('ServiceWorker registration failed: ', err);
           });
       });
     }
-  },[]);
+  }, []);
 
   if (loading) {
     return <LoadingScreen />;
-  } 
+  }
 
-  return ( 
+  return (
     <Router>
       <ThemeProvider>
         <AuthProvider>
@@ -157,31 +156,134 @@ function App() {
             <div className="App">
               <InstallPrompt />
               <NotificationManager />
+              
               <Routes>
                 {/* Auth Routes */}
-                <Route path="/login" element={<AuthRoute> <Login /> </AuthRoute>} />
-                <Route path="/signup" element={<AuthRoute> <Signup /> </AuthRoute>} />
-                <Route path="/forgot-password" element={<AuthRoute> <ForgotPassword /> </AuthRoute>} />
+                <Route path="/login" element={
+                  <AuthRoute>
+                    <Login />
+                  </AuthRoute>
+                } />
+                <Route path="/signup" element={
+                  <AuthRoute>
+                    <Signup />
+                  </AuthRoute>
+                } />
+                <Route path="/forgot-password" element={
+                  <AuthRoute>
+                    <ForgotPassword />
+                  </AuthRoute>
+                } />
 
                 {/* Main App Routes */}
-                <Route path="/" element={<ProtectedRoute> <Layout> <Dashboard /> </Layout> </ProtectedRoute>} />
-                <Route path="/daily" element={<ProtectedRoute> <Layout> <DailyEncouragement /> </Layout> </ProtectedRoute>} />
-                <Route path="/wellness-assessment" element={<ProtectedRoute> <Layout> <WellnessAssessmentPage /> </Layout> </ProtectedRoute>} />
-                <Route path="/progress" element={<ProtectedRoute> <Layout> <Progress /> </Layout> </ProtectedRoute>} />
-                <Route path="/goals" element={<ProtectedRoute> <Layout> <Goals /> </Layout> </ProtectedRoute>} />
-                <Route path="/journal" element={<ProtectedRoute> <Layout> <Journal /> </Layout> </ProtectedRoute>} />
-                <Route path="/stories" element={<ProtectedRoute> <Layout> <Stories /> </Layout> </ProtectedRoute>} />
-                <Route path="/quiz" element={<ProtectedRoute> <Layout> <Quiz /> </Layout> </ProtectedRoute>} />
-                <Route path="/resources" element={<ProtectedRoute> <Layout> <Resources /> </Layout> </ProtectedRoute>} />
-                <Route path="/profile" element={<ProtectedRoute> <Layout> <Profile /> </Layout> </ProtectedRoute>} />
+                <Route path="/" element={
+                  <ProtectedRoute>
+                    <Layout>
+                      <Dashboard />
+                    </Layout>
+                  </ProtectedRoute>
+                } />
+                <Route path="/daily" element={
+                  <ProtectedRoute>
+                    <Layout>
+                      <DailyEncouragement />
+                    </Layout>
+                  </ProtectedRoute>
+                } />
+                <Route path="/wellness-assessment" element={
+                  <ProtectedRoute>
+                    <Layout>
+                      <WellnessAssessmentPage />
+                    </Layout>
+                  </ProtectedRoute>
+                } />
+                <Route path="/progress" element={
+                  <ProtectedRoute>
+                    <Layout>
+                      <Progress />
+                    </Layout>
+                  </ProtectedRoute>
+                } />
+                <Route path="/goals" element={
+                  <ProtectedRoute>
+                    <Layout>
+                      <Goals />
+                    </Layout>
+                  </ProtectedRoute>
+                } />
+                <Route path="/journal" element={
+                  <ProtectedRoute>
+                    <Layout>
+                      <Journal />
+                    </Layout>
+                  </ProtectedRoute>
+                } />
+                <Route path="/stories" element={
+                  <ProtectedRoute>
+                    <Layout>
+                      <Stories />
+                    </Layout>
+                  </ProtectedRoute>
+                } />
+                <Route path="/quiz" element={
+                  <ProtectedRoute>
+                    <Layout>
+                      <Quiz />
+                    </Layout>
+                  </ProtectedRoute>
+                } />
+                <Route path="/resources" element={
+                  <ProtectedRoute>
+                    <Layout>
+                      <Resources />
+                    </Layout>
+                  </ProtectedRoute>
+                } />
+                <Route path="/profile" element={
+                  <ProtectedRoute>
+                    <Layout>
+                      <Profile />
+                    </Layout>
+                  </ProtectedRoute>
+                } />
 
                 {/* Admin Routes */}
                 <Route path="/admin/login" element={<AdminLogin />} />
-                <Route path="/admin" element={<AdminRoute> <AdminLayout> <AdminDashboard /> </AdminLayout> </AdminRoute>} />
-                <Route path="/admin/users" element={<AdminRoute> <AdminLayout> <AdminUsers /> </AdminLayout> </AdminRoute>} />
-                <Route path="/admin/content" element={<AdminRoute> <AdminLayout> <AdminContent /> </AdminLayout> </AdminRoute>} />
-                <Route path="/admin/analytics" element={<AdminRoute> <AdminLayout> <AdminAnalytics /> </AdminLayout> </AdminRoute>} />
-                <Route path="/admin/settings" element={<AdminRoute> <AdminLayout> <AdminSettings /> </AdminLayout> </AdminRoute>} />
+                <Route path="/admin" element={
+                  <AdminRoute>
+                    <AdminLayout>
+                      <AdminDashboard />
+                    </AdminLayout>
+                  </AdminRoute>
+                } />
+                <Route path="/admin/users" element={
+                  <AdminRoute>
+                    <AdminLayout>
+                      <AdminUsers />
+                    </AdminLayout>
+                  </AdminRoute>
+                } />
+                <Route path="/admin/content" element={
+                  <AdminRoute>
+                    <AdminLayout>
+                      <AdminContent />
+                    </AdminLayout>
+                  </AdminRoute>
+                } />
+                <Route path="/admin/analytics" element={
+                  <AdminRoute>
+                    <AdminLayout>
+                      <AdminAnalytics />
+                    </AdminLayout>
+                  </AdminRoute>
+                } />
+                <Route path="/admin/settings" element={
+                  <AdminRoute>
+                    <AdminLayout>
+                      <AdminSettings />
+                    </AdminLayout>
+                  </AdminRoute>
+                } />
 
                 {/* Fallback route */}
                 <Route path="*" element={<Navigate to="/" />} />
@@ -190,7 +292,7 @@ function App() {
           </DataProvider>
         </AuthProvider>
       </ThemeProvider>
-    </Router> 
+    </Router>
   );
 }
 
