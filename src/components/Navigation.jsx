@@ -1,28 +1,28 @@
 import React from 'react';
-import {Link,useLocation} from 'react-router-dom';
-import {motion,AnimatePresence} from 'framer-motion';
+import {Link, useLocation} from 'react-router-dom';
+import {motion, AnimatePresence} from 'framer-motion';
 import {useTheme} from '../contexts/ThemeContext';
 import SafeIcon from '../common/SafeIcon';
 import Logo from './Logo';
 import * as FiIcons from 'react-icons/fi';
 
-const {FiHome,FiHeart,FiTarget,FiBookOpen,FiUser,FiX,FiActivity,FiClipboard,FiEdit3,FiLeaf}=FiIcons;
+const {FiHome, FiHeart, FiTarget, FiBookOpen, FiUser, FiX, FiActivity, FiClipboard, FiEdit3, FiLeaf} = FiIcons;
 
-const Navigation=({isOpen,onClose})=> {
-  const location=useLocation();
-  const {isDark}=useTheme();
+const Navigation = ({isOpen, onClose}) => {
+  const location = useLocation();
+  const {isDark} = useTheme();
 
-  const navItems=[
-    {path: '/',label: 'Dashboard',icon: FiHome},
-    {path: '/daily',label: 'Daily Encouragement',icon: FiHeart},
-    {path: '/wellness-assessment',label: 'Wellness Assessment',icon: FiClipboard},
-    {path: '/goals',label: 'Goals',icon: FiTarget},
-    {path: '/progress',label: 'Progress',icon: FiActivity},
-    {path: '/journal',label: 'Personal Journal',icon: FiEdit3},
-    {path: '/stories',label: 'Stories',icon: FiBookOpen},
-    {path: '/quiz',label: 'Quizzes',icon: FiActivity},
-    {path: '/resources',label: 'Wellness Resources',icon: FiLeaf},
-    {path: '/profile',label: 'Profile',icon: FiUser}
+  const navItems = [
+    {path: '/', label: 'Dashboard', icon: FiHome},
+    {path: '/daily', label: 'Daily Encouragement', icon: FiHeart},
+    {path: '/wellness-assessment', label: 'Wellness Assessment', icon: FiClipboard},
+    {path: '/goals', label: 'Goals', icon: FiTarget},
+    {path: '/progress', label: 'Progress', icon: FiActivity},
+    {path: '/journal', label: 'Personal Journal', icon: FiEdit3},
+    {path: '/stories', label: 'Stories', icon: FiBookOpen},
+    {path: '/quiz', label: 'Quizzes', icon: FiActivity},
+    {path: '/resources', label: 'Wellness Resources', icon: FiLeaf},
+    {path: '/profile', label: 'Profile', icon: FiUser}
   ];
 
   return (
@@ -40,14 +40,13 @@ const Navigation=({isOpen,onClose})=> {
         )}
       </AnimatePresence>
 
-      {/* Navigation Sidebar */}
-      <motion.nav
-        initial={false}
-        animate={{
-          x: isOpen ? 0 : '-100%'
-        }}
-        className={`fixed left-0 top-0 bottom-0 w-64 z-50 ${isDark ? 'bg-gray-800' : 'bg-white'} shadow-xl 
-          lg:translate-x-0 lg:shadow-none`}
+      {/* Navigation Sidebar - Always visible on desktop */}
+      <nav
+        className={`fixed left-0 top-0 bottom-0 w-64 z-50 ${
+          isDark ? 'bg-gray-800' : 'bg-white'
+        } shadow-xl transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:z-auto ${
+          isOpen ? 'translate-x-0' : '-translate-x-full'
+        }`}
       >
         {/* Header */}
         <div className="p-4 border-b border-gray-200 dark:border-gray-700">
@@ -67,7 +66,7 @@ const Navigation=({isOpen,onClose})=> {
             {/* Close button - only visible on mobile */}
             <button
               onClick={onClose}
-              className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 lg:hidden"
+              className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 lg:hidden transition-colors"
             >
               <SafeIcon icon={FiX} className="w-5 h-5" />
             </button>
@@ -75,19 +74,19 @@ const Navigation=({isOpen,onClose})=> {
         </div>
 
         {/* Navigation Items */}
-        <div className="p-4 space-y-2 mt-4">
-          {navItems.map((item,index)=> (
+        <div className="p-4 space-y-2 mt-4 overflow-y-auto" style={{height: 'calc(100vh - 200px)'}}>
+          {navItems.map((item, index) => (
             <motion.div
               key={item.path}
-              initial={{opacity: 0,x: -20}}
-              animate={{opacity: 1,x: 0}}
+              initial={{opacity: 0, x: -20}}
+              animate={{opacity: 1, x: 0}}
               transition={{delay: index * 0.05}}
             >
               <Link
                 to={item.path}
-                onClick={onClose}
+                onClick={() => window.innerWidth < 1024 && onClose()}
                 className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-all group relative overflow-hidden ${
-                  location.pathname===item.path
+                  location.pathname === item.path
                     ? 'bg-gradient-to-r from-primary-500 to-accent-600 text-white shadow-lg'
                     : 'hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300'
                 }`}
@@ -95,7 +94,7 @@ const Navigation=({isOpen,onClose})=> {
                 <SafeIcon 
                   icon={item.icon} 
                   className={`w-5 h-5 transition-transform group-hover:scale-110 ${
-                    location.pathname===item.path 
+                    location.pathname === item.path 
                       ? 'text-white' 
                       : 'text-gray-500 dark:text-gray-400'
                   }`} 
@@ -103,7 +102,7 @@ const Navigation=({isOpen,onClose})=> {
                 <span className="font-medium">{item.label}</span>
                 
                 {/* Active Indicator */}
-                {location.pathname===item.path && (
+                {location.pathname === item.path && (
                   <motion.div
                     layoutId="activeIndicator"
                     className="absolute right-4 w-2 h-2 bg-white rounded-full"
@@ -132,7 +131,7 @@ const Navigation=({isOpen,onClose})=> {
             </div>
           </div>
         </div>
-      </motion.nav>
+      </nav>
     </>
   );
 };
