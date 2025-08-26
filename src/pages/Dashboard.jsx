@@ -21,7 +21,6 @@ const Dashboard=()=> {
 
   // Enhanced quick actions with wellness resources highlighted
   const quickActions=[
-    {title: 'Wellness Resources',description: 'Access guided meditations, breathing techniques, stress management tools, and wellness recipes',icon: FiLeaf,link: '/resources',color: 'from-emerald-500 to-teal-600',highlight: true,category: 'Featured',badge: 'New Resources'},
     {title: 'Take Wellness Assessment',description: 'Comprehensive evaluation of your mental wellness across 5 key areas',icon: FiClipboard,link: '/wellness-assessment',color: 'from-purple-500 to-indigo-600',highlight: true,category: 'Assessment'},
     {title: 'Daily Encouragement',description: 'Get your daily dose of motivation and positive affirmations',icon: FiHeart,link: '/daily',color: 'from-pink-500 to-rose-600',category: 'Inspiration'},
     {title: 'Personal Journal',description: 'Express your thoughts in your completely private journal space',icon: FiEdit3,link: '/journal',color: 'from-emerald-500 to-teal-600',category: 'Reflection'},
@@ -94,6 +93,87 @@ const Dashboard=()=> {
         ))}
       </div>
 
+      {/* DEDICATED WELLNESS RESOURCES TILE - NEW SECTION */}
+      <motion.div
+        initial={{opacity: 0,y: 20}}
+        animate={{opacity: 1,y: 0}}
+        transition={{delay: 0.2}}
+        className="space-y-6"
+      >
+        <div className="text-center">
+          <h2 className="text-2xl font-bold mb-2">🌿 Wellness Resources Hub</h2>
+          <p className="text-gray-600 dark:text-gray-400">
+            Your complete toolkit for mental wellness - meditations, breathing techniques, stress management, and wellness recipes
+          </p>
+        </div>
+
+        {/* Large Wellness Resources Tile */}
+        <Link to="/resources" className="block">
+          <motion.div
+            whileHover={{y: -8, scale: 1.02}}
+            className={`p-8 rounded-2xl ${isDark ? 'bg-gray-800 border border-gray-700' : 'bg-white border border-gray-200'} shadow-lg hover:shadow-2xl transition-all duration-500 relative overflow-hidden group`}
+            style={{
+              backgroundImage: isDark 
+                ? `linear-gradient(to bottom right,rgba(31,41,55,0.95),rgba(17,24,39,0.95)),radial-gradient(circle at 20% 80%,rgba(16,185,129,0.15) 0%,transparent 50%),radial-gradient(circle at 80% 20%,rgba(139,92,246,0.15) 0%,transparent 50%)`
+                : `linear-gradient(to bottom right,rgba(255,255,255,0.95),rgba(249,250,251,0.95)),radial-gradient(circle at 20% 80%,rgba(16,185,129,0.1) 0%,transparent 50%),radial-gradient(circle at 80% 20%,rgba(139,92,246,0.1) 0%,transparent 50%)`
+            }}
+          >
+            {/* Featured Badge */}
+            <div className="absolute top-6 right-6">
+              <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300">
+                <SafeIcon icon={FiStar} className="w-4 h-4 mr-1" />
+                Featured Resources
+              </span>
+            </div>
+
+            {/* Main Content */}
+            <div className="flex items-start space-x-6">
+              {/* Icon */}
+              <div className="p-4 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-600 shadow-lg group-hover:scale-110 transition-transform duration-300">
+                <SafeIcon icon={FiLeaf} className="w-10 h-10 text-white" />
+              </div>
+
+              {/* Content */}
+              <div className="flex-1">
+                <h3 className="text-2xl font-bold mb-3 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
+                  Wellness Resources Library
+                </h3>
+                <p className="text-gray-600 dark:text-gray-400 text-lg mb-4 leading-relaxed">
+                  Access our comprehensive collection of guided meditations, breathing techniques, stress management tools, 
+                  wellness recipes, and relaxation resources. Everything you need for your mental health journey.
+                </p>
+
+                {/* Resource Categories Grid */}
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+                  {[
+                    {name: 'Meditation', icon: FiUser, count: '3', color: 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300'},
+                    {name: 'Breathing', icon: FiWind, count: '2', color: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300'},
+                    {name: 'Stress Relief', icon: FiZap, count: '2', color: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300'},
+                    {name: 'Recipes', icon: FiCoffee, count: '3', color: 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300'}
+                  ].map((category, idx) => (
+                    <div key={category.name} className={`flex items-center space-x-2 px-3 py-2 rounded-lg ${category.color} transition-all hover:scale-105`}>
+                      <SafeIcon icon={category.icon} className="w-4 h-4" />
+                      <span className="text-sm font-medium">{category.name}</span>
+                      <span className="text-xs opacity-75">({category.count})</span>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Action Button */}
+                <div className="flex items-center text-lg font-semibold text-emerald-600 dark:text-emerald-400 group-hover:text-emerald-700 dark:group-hover:text-emerald-300 transition-colors">
+                  <span>Explore All Resources</span>
+                  <SafeIcon icon={FiArrowRight} className="w-5 h-5 ml-2 transform group-hover:translate-x-2 transition-transform duration-300" />
+                </div>
+              </div>
+            </div>
+
+            {/* Decorative Elements */}
+            <div className="absolute -bottom-4 -right-4 w-32 h-32 bg-gradient-to-r from-emerald-500/10 to-teal-500/10 rounded-full blur-xl group-hover:scale-150 transition-transform duration-500"></div>
+            <div className="absolute -top-4 -left-4 w-24 h-24 bg-gradient-to-r from-purple-500/10 to-indigo-500/10 rounded-full blur-xl group-hover:scale-150 transition-transform duration-500"></div>
+          </motion.div>
+        </Link>
+      </motion.div>
+
       {/* Featured Actions */}
       <motion.div
         initial={{opacity: 0,y: 20}}
@@ -134,18 +214,8 @@ const Dashboard=()=> {
                     </span>
                   </div>
 
-                  {/* Special badges */}
-                  {action.badge && (
-                    <div className="absolute top-4 left-4">
-                      <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300">
-                        <SafeIcon icon={FiStar} className="w-3 h-3 mr-1" />
-                        {action.badge}
-                      </span>
-                    </div>
-                  )}
-
                   {/* Highlight badge */}
-                  {action.highlight && !action.badge && (
+                  {action.highlight && (
                     <div className="absolute top-4 left-4">
                       <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300">
                         <SafeIcon icon={FiStar} className="w-3 h-3 mr-1" />
@@ -174,101 +244,6 @@ const Dashboard=()=> {
               </Link>
             </motion.div>
           ))}
-        </div>
-      </motion.div>
-
-      {/* Wellness Resources Preview Section */}
-      <motion.div
-        initial={{opacity: 0,y: 20}}
-        animate={{opacity: 1,y: 0}}
-        transition={{delay: 0.6}}
-        className={`p-6 rounded-xl ${isDark ? 'bg-gray-800 border border-gray-700' : 'bg-white border border-gray-200'} shadow-lg`}
-      >
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center space-x-3">
-            <div className="p-2 rounded-lg bg-gradient-to-r from-emerald-500 to-teal-600">
-              <SafeIcon icon={FiLeaf} className="w-6 h-6 text-white" />
-            </div>
-            <div>
-              <h3 className="text-xl font-semibold">Featured Wellness Resources</h3>
-              <p className="text-gray-600 dark:text-gray-400 text-sm">Quick access to popular meditation guides, techniques, and recipes</p>
-            </div>
-          </div>
-          <Link 
-            to="/resources" 
-            className="flex items-center space-x-2 text-primary-600 hover:text-primary-700 dark:text-primary-400 font-medium transition-colors"
-          >
-            <span>View All</span>
-            <SafeIcon icon={FiArrowRight} className="w-4 h-4" />
-          </Link>
-        </div>
-
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {featuredResources.map((resource,index)=> (
-            <motion.div
-              key={resource.title}
-              initial={{opacity: 0,y: 20}}
-              animate={{opacity: 1,y: 0}}
-              transition={{delay: 0.7 + index * 0.1}}
-              whileHover={{scale: 1.02}}
-              className="group cursor-pointer"
-            >
-              <Link to="/resources" className="block">
-                <div className={`p-4 rounded-lg ${isDark ? 'bg-gray-700/50 hover:bg-gray-700' : 'bg-gray-50 hover:bg-gray-100'} transition-all duration-300 border border-transparent hover:border-primary-200 dark:hover:border-primary-700`}>
-                  <div className="flex items-center space-x-3 mb-3">
-                    <div className={`p-2 rounded-lg bg-gradient-to-r ${resource.color}`}>
-                      <SafeIcon icon={resource.icon} className="w-4 h-4 text-white" />
-                    </div>
-                    <div className="flex-1">
-                      <div className="flex items-center justify-between">
-                        <span className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">
-                          {resource.category}
-                        </span>
-                        <span className="text-xs text-gray-500 dark:text-gray-400">
-                          {resource.duration}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                  <h4 className="font-semibold text-sm line-clamp-2 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
-                    {resource.title}
-                  </h4>
-                  <div className="mt-2 flex items-center text-xs text-primary-600 dark:text-primary-400 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <span>Explore Resource</span>
-                    <SafeIcon icon={FiArrowRight} className="w-3 h-3 ml-1" />
-                  </div>
-                </div>
-              </Link>
-            </motion.div>
-          ))}
-        </div>
-
-        {/* Quick Resource Categories */}
-        <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
-          <div className="flex flex-wrap gap-2 justify-center">
-            {[
-              {name: 'Meditation',icon: FiUser,count: '3'},
-              {name: 'Breathing',icon: FiWind,count: '2'},
-              {name: 'Stress Relief',icon: FiZap,count: '2'},
-              {name: 'Sleep & Rest',icon: FiMoon,count: '1'},
-              {name: 'Audio Guides',icon: FiHeadphones,count: '1'},
-              {name: 'Recipes',icon: FiCoffee,count: '3'}
-            ].map((category,index)=> (
-              <Link
-                key={category.name}
-                to="/resources"
-                className="flex items-center space-x-2 px-3 py-2 bg-gray-100 dark:bg-gray-700 hover:bg-primary-100 dark:hover:bg-primary-900/30 rounded-full text-sm transition-colors group"
-              >
-                <SafeIcon icon={category.icon} className="w-4 h-4 text-gray-500 group-hover:text-primary-600 dark:group-hover:text-primary-400" />
-                <span className="text-gray-700 dark:text-gray-300 group-hover:text-primary-700 dark:group-hover:text-primary-300">
-                  {category.name}
-                </span>
-                <span className="text-xs text-gray-500 bg-gray-200 dark:bg-gray-600 px-2 py-0.5 rounded-full">
-                  {category.count}
-                </span>
-              </Link>
-            ))}
-          </div>
         </div>
       </motion.div>
 
