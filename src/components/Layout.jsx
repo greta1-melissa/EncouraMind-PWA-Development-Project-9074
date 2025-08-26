@@ -33,14 +33,14 @@ const Layout = ({children}) => {
         {/* Header */}
         <Header onMenuClick={() => setSidebarOpen(!sidebarOpen)} />
         
-        {/* Page Content */}
-        <main className="flex-1">
+        {/* Page Content - Fixed to use pt-24 instead of pt-20 for proper spacing */}
+        <main className="flex-1 pt-24">
           <motion.div
             initial={{opacity: 0, y: 20}}
             animate={{opacity: 1, y: 0}}
             exit={{opacity: 0, y: -20}}
             transition={{duration: 0.3}}
-            className="p-4 lg:p-6 pt-20"
+            className="p-4 lg:p-6"
           >
             {children}
           </motion.div>

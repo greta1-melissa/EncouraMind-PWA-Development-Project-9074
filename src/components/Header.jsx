@@ -14,7 +14,7 @@ const Header = ({onMenuClick}) => {
     <header className={`fixed top-0 left-0 right-0 z-30 lg:left-64 ${
       isDark ? 'bg-gray-800/95' : 'bg-white/95'
     } border-b border-gray-200 dark:border-gray-700 backdrop-blur-md shadow-sm`}>
-      <div className="flex items-center justify-between px-4 py-3">
+      <div className="flex items-center justify-between px-4 py-4 min-h-[4rem]">
         <div className="flex items-center space-x-4">
           {/* Mobile menu button */}
           <button 
